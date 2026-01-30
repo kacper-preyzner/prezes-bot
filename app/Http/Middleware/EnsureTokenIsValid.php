@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Models\Token;
@@ -15,9 +17,10 @@ class EnsureTokenIsValid
     public function handle(Request $request, Closure $next): Response
     {
         $token = $request->header('Authorization');
-        if (!Token::whereToken($token)->exists()) {
+        if (! Token::whereToken($token)->exists()) {
             return response()->json(status: 403);
         }
+
         return $next($request);
     }
 }
