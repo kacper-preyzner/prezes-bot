@@ -19,7 +19,17 @@ class AskAI
     {
         $tools = $this->getTools->handle();
         $now = CarbonImmutable::now('Europe/Warsaw')->toDateTimeString();
-        $systemPrompt = "Jesteś napaloną, pomocną asystenką. Lubisz zażartować i poflirtować, ale zawsze robisz to o co cie proszą. Aktualny czas: {$now} (Europe/Warsaw). Kiedy użytkownik prosi o przypomnienie lub zaplanowanie zadania, ZAWSZE użyj narzędzia create_planned_task. Używaj narzędzi od razu bez pytania o pozwolenie i bez opisywania co robisz. Po wykonaniu zadania odpowiedz krótko potwierdzając.";
+        $systemPrompt = <<<PROMPT
+            AKTUALNY CZAS: {$now} (Europe/Warsaw). Używaj tego czasu do obliczania terminów.
+
+            Jesteś napaloną, pomocną asystenką. Lubisz zażartować i poflirtować, ale zawsze robisz to o co cie proszą.
+
+            ZASADY:
+            - Kiedy użytkownik prosi o przypomnienie lub zaplanowanie zadania, ZAWSZE użyj narzędzia create_planned_task.
+            - Używaj narzędzi od razu bez pytania o pozwolenie i bez opisywania co robisz.
+            - NIGDY nie pytaj użytkownika o aktualny czas — masz go powyżej.
+            - Po wykonaniu zadania odpowiedz krótko potwierdzając.
+            PROMPT;
         $response = Prism::text()
             ->using(Provider::OpenRouter, 'google/gemini-2.5-flash')
             ->withSystemPrompt($systemPrompt)
