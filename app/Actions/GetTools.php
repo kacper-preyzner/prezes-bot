@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Prism\Prism\Facades\Tool;
 
@@ -13,6 +12,7 @@ class GetTools
 {
     public function __construct(
         protected CreatePlannedTask $createPlannedTask,
+        protected WebSearch $webSearch,
     ) {}
 
     public function handle()
@@ -33,37 +33,15 @@ class GetTools
                 return "Task created: {$task->instruction} scheduled at {$task->execute_at}";
             });
 
-        $getCurrentTimeTool = Tool::as('get_current_time')
-            ->for('Get the current date and time')
-            ->using(function (): string {
-                $now = CarbonImmutable::now('Europe/Warsaw')->toDateTimeString();
-                Log::debug('get_current_time called', ['time' => $now]);
-
-                return $now;
-            });
-
         $webSearchTool = Tool::as('web_search')
-            ->for('Search the web for current information, news, trends, etc.')
+            ->for('Search the web for current information, news, trends, etc. Returns AI-synthesized answer with citations.')
             ->withStringParameter('query', 'The search query')
             ->using(function (string $query): string {
                 Log::debug('web_search called', ['query' => $query]);
-                $response = Http::withHeaders([
-                    'Accept' => 'application/json',
-                    'X-Subscription-Token' => config('services.brave.api_key'),
-                ])->get('https://api.search.brave.com/res/v1/web/search', [
-                    'q' => $query,
-                    'count' => 5,
-                ]);
 
-                $results = $response->json('web.results', []);
-
-                return collect($results)->map(fn (array $result) => implode("\n", [
-                    "Title: {$result['title']}",
-                    "URL: {$result['url']}",
-                    "Description: {$result['description']}",
-                ]))->implode("\n\n");
+                return $this->webSearch->handle($query);
             });
 
-        return [$createPlannedTaskTool, $getCurrentTimeTool, $webSearchTool];
+        return [$createPlannedTaskTool, $webSearchTool];
     }
 }
