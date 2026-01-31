@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import { View, TextInput, Pressable, Text, StyleSheet } from 'react-native';
+import {
+  ExpoSpeechRecognitionModule,
+  useSpeechRecognitionEvent,
+} from 'expo-speech-recognition';
 
 type Props = {
   onSend: (text: string) => void;
@@ -8,12 +12,44 @@ type Props = {
 
 export default function ChatInput({ onSend, disabled }: Props) {
   const [text, setText] = useState('');
+  const [listening, setListening] = useState(false);
+
+  useSpeechRecognitionEvent('result', (ev) => {
+    const transcript = ev.results[0]?.transcript;
+    if (transcript) {
+      setText(transcript);
+    }
+  });
+
+  useSpeechRecognitionEvent('end', () => {
+    setListening(false);
+  });
+
+  useSpeechRecognitionEvent('error', () => {
+    setListening(false);
+  });
 
   const handleSend = () => {
     const trimmed = text.trim();
     if (!trimmed || disabled) return;
     onSend(trimmed);
     setText('');
+  };
+
+  const toggleListening = async () => {
+    if (listening) {
+      ExpoSpeechRecognitionModule.stop();
+      return;
+    }
+
+    const { granted } = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+    if (!granted) return;
+
+    ExpoSpeechRecognitionModule.start({
+      interimResults: false,
+      lang: 'pl-PL',
+    });
+    setListening(true);
   };
 
   return (
@@ -28,6 +64,13 @@ export default function ChatInput({ onSend, disabled }: Props) {
         multiline
         onSubmitEditing={handleSend}
       />
+      <Pressable
+        style={[styles.button, styles.micButton, listening && styles.micActive, disabled && styles.buttonDisabled]}
+        onPress={toggleListening}
+        disabled={disabled}
+      >
+        <Text style={styles.buttonText}>Mic</Text>
+      </Pressable>
       <Pressable
         style={[styles.button, (disabled || !text.trim()) && styles.buttonDisabled]}
         onPress={handleSend}
@@ -67,6 +110,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
+  },
+  micButton: {
+    backgroundColor: '#6C757D',
+  },
+  micActive: {
+    backgroundColor: '#DC3545',
   },
   buttonDisabled: {
     opacity: 0.4,
