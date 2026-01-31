@@ -15,6 +15,7 @@ class TTSController extends Controller
         $audio = $generateTTS->handle($request->validated('text'));
 
         Log::debug('TTS generated succesfully!');
+
         return response()->json([
             'audio' => base64_encode($audio),
         ]);
