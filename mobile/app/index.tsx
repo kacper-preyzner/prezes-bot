@@ -9,11 +9,11 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as Speech from 'expo-speech';
 import { Volume2, VolumeOff } from 'lucide-react-native';
 import ChatBubble from '../components/ChatBubble';
 import ChatInput from '../components/ChatInput';
 import { sendMessage } from '../lib/api';
+import { speakText } from '../lib/tts';
 import { getAutoRead, setAutoRead as persistAutoRead } from '../lib/storage';
 import { Message } from '../types/chat';
 
@@ -50,7 +50,7 @@ export default function ChatScreen() {
       const assistantMessage: Message = { role: 'assistant', content: reply };
       setMessages((prev) => [...prev, assistantMessage]);
       if (autoReadRef.current) {
-        Speech.speak(reply, { language: 'pl-PL', pitch: 1.1 });
+        speakText(reply);
       }
     } catch (error) {
       const errorMessage: Message = {

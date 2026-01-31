@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AskAIController;
+use App\Http\Controllers\TTSController;
 use App\Http\Middleware\EnsureTokenIsValid;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -13,4 +14,5 @@ Route::middleware(EnsureTokenIsValid::class)->group(function () {
     });
 
     Route::post('/ask', AskAIController::class);
+    Route::post('/tts', TTSController::class);
 });
