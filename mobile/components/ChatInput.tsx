@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, TextInput, Pressable, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Pressable, StyleSheet } from 'react-native';
+import { Mic, SendHorizontal } from 'lucide-react-native';
 import {
   ExpoSpeechRecognitionModule,
   useSpeechRecognitionEvent,
@@ -69,14 +70,14 @@ export default function ChatInput({ onSend, disabled }: Props) {
         onPress={toggleListening}
         disabled={disabled}
       >
-        <Text style={styles.buttonText}>Mic</Text>
+        <Mic size={20} color="#FFFFFF" />
       </Pressable>
       <Pressable
         style={[styles.button, (disabled || !text.trim()) && styles.buttonDisabled]}
         onPress={handleSend}
         disabled={disabled || !text.trim()}
       >
-        <Text style={styles.buttonText}>Send</Text>
+        <SendHorizontal size={20} color="#FFFFFF" />
       </Pressable>
     </View>
   );
@@ -89,20 +90,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: '#CCC',
-    backgroundColor: '#FFFFFF',
+    borderTopColor: '#3A3A3C',
+    backgroundColor: '#1C1C1E',
   },
   input: {
     flex: 1,
     minHeight: 40,
     maxHeight: 100,
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: '#3A3A3C',
     borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 10,
     fontSize: 16,
-    backgroundColor: '#F9F9F9',
+    color: '#FFFFFF',
+    backgroundColor: '#2C2C2E',
   },
   button: {
     marginLeft: 8,
@@ -119,10 +121,5 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     opacity: 0.4,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });

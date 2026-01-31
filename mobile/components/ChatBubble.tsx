@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 4,
   },
   assistantBubble: {
-    backgroundColor: '#E9E9EB',
+    backgroundColor: '#2C2C2E',
     borderBottomLeftRadius: 4,
   },
   text: {
@@ -48,6 +48,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   assistantText: {
-    color: '#000000',
+    color: '#FFFFFF',
   },
 });
