@@ -24,7 +24,6 @@ class AskAI
             ->using(Provider::OpenRouter, 'google/gemini-2.5-flash')
             ->withSystemPrompt($systemPrompt)
             ->withPrompt($prompt)
-            // ->withProviderTools([new ProviderTool('google_search')])
             ->withTools($tools)
             ->withMaxSteps(10)
             ->asText();
