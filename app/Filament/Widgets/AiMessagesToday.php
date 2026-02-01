@@ -10,14 +10,14 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class AiMessagesToday extends StatsOverviewWidget
 {
+    protected null|string $pollingInterval = '1s';
+
     protected function getStats(): array
     {
         return [
             Stat::make(
                 'Wiadomości AI dzisiaj',
-                Message::where('role', 'assistant')
-                    ->whereDate('created_at', today())
-                    ->count(),
+                Message::where('role', 'assistant')->whereDate('created_at', today())->count(),
             ),
         ];
     }
