@@ -1,4 +1,4 @@
-import { API_URL, APP_TOKEN } from '@env';
+import { API_URL, APP_TOKEN } from './env';
 import { Message } from '../types/chat';
 
 export async function sendMessage(

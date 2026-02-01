@@ -3,7 +3,7 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
-import { API_URL, APP_TOKEN } from '@env';
+import { API_URL, APP_TOKEN } from './env';
 
 const PUSH_TOKEN_KEY = 'push_token';
 

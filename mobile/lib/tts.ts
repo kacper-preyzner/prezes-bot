@@ -1,7 +1,7 @@
 import { File, Paths } from 'expo-file-system';
 import { createAudioPlayer } from 'expo-audio';
 import * as Speech from 'expo-speech';
-import { API_URL, APP_TOKEN } from '@env';
+import { API_URL, APP_TOKEN } from './env';
 
 export async function speakText(text: string): Promise<void> {
   try {
