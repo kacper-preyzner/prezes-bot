@@ -18,6 +18,7 @@
 /public/storage
 /storage/*.key
 /storage/pail
+package-lock.json
 /vendor
 Homestead.json
 Homestead.yaml
