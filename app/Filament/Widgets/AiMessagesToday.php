@@ -19,6 +19,10 @@ class AiMessagesToday extends StatsOverviewWidget
                 'Wiadomości AI dzisiaj',
                 Message::where('role', 'assistant')->whereDate('created_at', today())->count(),
             ),
+            Stat::make(
+                'Wiadomości AI łącznie',
+                Message::where('role', 'assistant')->count(),
+            ),
         ];
     }
 }
