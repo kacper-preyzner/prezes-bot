@@ -34,9 +34,11 @@ class ExecutePlannedTasks extends Command
             } finally {
                 $task->refresh();
 
-                if ($task->interval !== null) {
+                $interval = $task->intervalObject();
+
+                if ($interval !== null) {
                     $task->update([
-                        'execute_at' => $task->interval->nextExecuteAt($task->execute_at),
+                        'execute_at' => $interval->nextExecuteAt($task->execute_at),
                         'is_running' => false,
                     ]);
                 } else {

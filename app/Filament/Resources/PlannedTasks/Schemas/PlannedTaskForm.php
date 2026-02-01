@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace App\Filament\Resources\PlannedTasks\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class PlannedTaskForm
@@ -23,7 +24,9 @@ class PlannedTaskForm
                     ->rows(4)
                     ->columnSpanFull(),
                 DateTimePicker::make('execute_at')
-                    ->required(),
+                    ->required()
+                    ->native(false)
+                    ->displayFormat('d.m.Y, H:i'),
                 Select::make('interval_type')
                     ->label('Interwał')
                     ->options([
@@ -33,6 +36,7 @@ class PlannedTaskForm
                         'at_times_of_day' => 'Codziennie o określonych godzinach',
                         'every_week_at' => 'Co tydzień',
                         'every_month_at' => 'Co miesiąc',
+                        'on_days_at_times' => 'W dane dni tygodnia o danych godzinach',
                     ])
                     ->default('')
                     ->live()
@@ -114,6 +118,38 @@ class PlannedTaskForm
                         $interval = self::resolveInterval($get('interval'));
                         if (is_array($interval) && isset($interval['time'])) {
                             $component->state($interval['time']);
+                        }
+                    })
+                    ->dehydrated(false),
+                Repeater::make('interval_schedule')
+                    ->label('Harmonogram')
+                    ->schema([
+                        Select::make('day')
+                            ->label('Dzień')
+                            ->options([
+                                0 => 'Niedziela',
+                                1 => 'Poniedziałek',
+                                2 => 'Wtorek',
+                                3 => 'Środa',
+                                4 => 'Czwartek',
+                                5 => 'Piątek',
+                                6 => 'Sobota',
+                            ])
+                            ->required(),
+                        TextInput::make('times')
+                            ->label('Godziny (np. 14:00,20:00)')
+                            ->required(),
+                    ])
+                    ->columns(2)
+                    ->visible(fn (Get $get) => $get('interval_type') === 'on_days_at_times')
+                    ->afterStateHydrated(function (Repeater $component, Get $get) {
+                        $interval = self::resolveInterval($get('interval'));
+                        if (is_array($interval) && isset($interval['schedule'])) {
+                            $items = [];
+                            foreach ($interval['schedule'] as $day => $times) {
+                                $items[] = ['day' => (int) $day, 'times' => implode(',', $times)];
+                            }
+                            $component->state($items);
                         }
                     })
                     ->dehydrated(false),

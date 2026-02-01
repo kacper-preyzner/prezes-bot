@@ -12,10 +12,15 @@ class CreatePlannedTask
 {
     public function handle(string $instruction, CarbonImmutable $executeAt, ?Interval $interval): PlannedTask
     {
+        if ($interval !== null) {
+            $now = CarbonImmutable::now('Europe/Warsaw');
+            $executeAt = $interval->nextExecuteAt($now->subSecond());
+        }
+
         return PlannedTask::create([
             'instruction' => $instruction,
             'execute_at' => $executeAt,
-            'interval' => $interval,
+            'interval' => $interval?->toArray(),
         ]);
     }
 }

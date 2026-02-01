@@ -23,13 +23,13 @@ class PlannedTasksTable
             ->columns([
                 TextColumn::make('id')->sortable(),
                 TextColumn::make('instruction')->searchable()->limit(50),
-                TextColumn::make('execute_at')->dateTime()->sortable(),
+                TextColumn::make('execute_at')->dateTime('d.m.Y, H:i')->sortable(),
                 TextColumn::make('interval')
                     ->label('Interwał')
-                    ->getStateUsing(fn ($record) => $record->interval?->label() ?? 'Jednorazowe'),
+                    ->getStateUsing(fn ($record) => $record->intervalObject()?->label() ?? 'Jednorazowe'),
                 IconColumn::make('is_running')->boolean(),
                 TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d.m.Y, H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
