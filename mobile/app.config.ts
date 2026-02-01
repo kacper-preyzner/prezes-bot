@@ -42,6 +42,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     permissions: [
       'android.permission.RECORD_AUDIO',
       'android.permission.MODIFY_AUDIO_SETTINGS',
+      'com.android.alarm.permission.SET_ALARM',
     ],
     package: 'com.prezes.prezesbot',
     googleServicesFile: './google-services.json',

@@ -9,7 +9,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Volume2, VolumeOff } from 'lucide-react-native';
+import { Timer, Volume2, VolumeOff } from 'lucide-react-native';
+import { setTimer } from '../modules/timer';
 import ChatBubble from '../components/ChatBubble';
 import ChatInput from '../components/ChatInput';
 import TypingIndicator from '../components/TypingIndicator';
@@ -144,6 +145,9 @@ export default function ChatScreen() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}
     >
         <SafeAreaView edges={['top']} style={styles.headerRow}>
+          <Pressable onPress={() => setTimer(60, 'Minutnik testowy')} style={styles.toggleButton}>
+            <Timer size={24} color="#FF9500" />
+          </Pressable>
           <Pressable onPress={toggleAutoRead} style={styles.toggleButton}>
             {autoRead ? (
               <Volume2 size={24} color="#007AFF" />
