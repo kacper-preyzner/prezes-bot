@@ -2,8 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
   Platform,
   Pressable,
   StyleSheet,
@@ -41,7 +39,8 @@ export default function ChatScreen() {
     if (!hasLoadedInitial.current) {
       hasLoadedInitial.current = true;
       fetchMessages().then(({ data, next_cursor }) => {
-        setMessages(data.reverse());
+        // API returns newest-first, which is what inverted FlatList expects
+        setMessages(data);
         setNextCursor(next_cursor);
       });
     }
@@ -75,7 +74,8 @@ export default function ChatScreen() {
             if (newMsgs.length === 0) return prev;
 
             newMsgs.forEach((m) => animatedIds.current.add(m.id));
-            return [...prev, ...newMsgs];
+            // Prepend new messages (newest first for inverted list)
+            return [...newMsgs.reverse(), ...prev];
           });
         }
       } catch {
@@ -99,45 +99,37 @@ export default function ChatScreen() {
     setLoadingHistory(true);
     try {
       const { data, next_cursor } = await fetchMessages(nextCursor);
-      setMessages((prev) => [...data.reverse(), ...prev]);
+      // Append older messages at the end (bottom of inverted list = older)
+      setMessages((prev) => [...prev, ...data]);
       setNextCursor(next_cursor);
     } finally {
       setLoadingHistory(false);
     }
   }, [loadingHistory, nextCursor]);
 
-  const handleScroll = useCallback(
-    (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-      if (e.nativeEvent.contentOffset.y <= 100) {
-        loadOlderMessages();
-      }
-    },
-    [loadOlderMessages],
-  );
-
   const handleSend = useCallback(async (text: string) => {
     setLoading(true);
     loadingRef.current = true;
 
-    // Optimistic user message (no id yet, will be replaced by server response)
-    setMessages((prev) => [...prev, { id: 0, role: 'user', content: text }]);
+    // Optimistic user message at the top (newest) of inverted list
+    setMessages((prev) => [{ id: 0, role: 'user', content: text }, ...prev]);
 
     try {
       const { userMessage, assistantMessage } = await sendMessage(text);
       animatedIds.current.add(assistantMessage.id);
       setMessages((prev) => [
-        ...prev.filter((m) => m.id !== 0),
-        userMessage,
         assistantMessage,
+        userMessage,
+        ...prev.filter((m) => m.id !== 0),
       ]);
       if (autoReadRef.current) {
         speakText(assistantMessage.content);
       }
     } catch {
       setMessages((prev) => [
+        { id: -Date.now() - 1, role: 'assistant' as const, content: 'Failed to get a response. Please try again.' },
+        { id: -Date.now(), role: 'user' as const, content: text },
         ...prev.filter((m) => m.id !== 0),
-        { id: -Date.now(), role: 'user', content: text },
-        { id: -Date.now() - 1, role: 'assistant', content: 'Failed to get a response. Please try again.' },
       ]);
     } finally {
       setLoading(false);
@@ -163,17 +155,15 @@ export default function ChatScreen() {
         <FlatList
           ref={flatListRef}
           data={messages}
+          inverted
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <ChatBubble {...item} animate={animatedIds.current.has(item.id)} />
           )}
           contentContainerStyle={styles.list}
-          onContentSizeChange={() =>
-            flatListRef.current?.scrollToEnd({ animated: true })
-          }
-          onScroll={handleScroll}
-          scrollEventThrottle={400}
-          ListHeaderComponent={
+          onEndReached={loadOlderMessages}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
             loadingHistory ? (
               <View style={styles.loadingHistory}>
                 <ActivityIndicator size="small" color="#007AFF" />
@@ -203,6 +193,8 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   list: {
+    flexGrow: 1,
+    justifyContent: 'flex-end',
     paddingVertical: 12,
   },
   loadingHistory: {
