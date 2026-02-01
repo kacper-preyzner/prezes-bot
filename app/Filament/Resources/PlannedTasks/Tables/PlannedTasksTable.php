@@ -9,6 +9,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Support\Colors\Color;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
@@ -40,8 +41,10 @@ class PlannedTasksTable
                 TernaryFilter::make('is_running'),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->color(Color::Purple),
+                EditAction::make()
+                    ->color('info'),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

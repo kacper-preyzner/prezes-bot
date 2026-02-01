@@ -20,6 +20,10 @@ class PlannedTaskResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    protected static ?string $modelLabel = 'Zaplanowane zadanie';
+
+    protected static ?string $pluralModelLabel = 'Zaplanowane zadania';
+
     public static function form(Schema $schema): Schema
     {
         return PlannedTaskForm::configure($schema);
