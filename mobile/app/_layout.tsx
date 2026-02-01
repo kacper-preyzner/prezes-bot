@@ -1,6 +1,20 @@
+import { useEffect } from 'react';
 import { Stack } from 'expo-router';
+import {
+  configureNotifications,
+  syncPushTokenWithBackend,
+  setupNotificationListeners,
+} from '../lib/notifications';
+
+configureNotifications();
 
 export default function RootLayout() {
+  useEffect(() => {
+    syncPushTokenWithBackend();
+    const cleanup = setupNotificationListeners();
+    return cleanup;
+  }, []);
+
   return (
     <Stack>
       <Stack.Screen

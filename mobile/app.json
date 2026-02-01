@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Prezes Bot",
+    "slug": "prezes-bot",
     "scheme": "prezes-bot",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +19,7 @@
         "NSSpeechRecognitionUsageDescription": "Allow $(PRODUCT_NAME) to use speech recognition.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use the microphone."
       },
-      "bundleIdentifier": "com.prezes.mobile"
+      "bundleIdentifier": "com.prezes.prezesbot"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,9 +30,11 @@
       "softwareKeyboardLayoutMode": "pan",
       "predictiveBackGestureEnabled": false,
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
-      "package": "com.prezes.mobile"
+      "package": "com.prezes.prezesbot",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -40,7 +42,22 @@
     "plugins": [
       "expo-router",
       "expo-speech-recognition",
-      "expo-audio"
-    ]
+      "expo-audio",
+      [
+        "expo-notifications",
+        {
+          "sounds": [
+            "./assets/notification.wav"
+          ]
+        }
+      ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "934e79af-ae95-4a40-ae92-442fad29df67"
+      }
+    },
+    "owner": "prezes"
   }
 }
