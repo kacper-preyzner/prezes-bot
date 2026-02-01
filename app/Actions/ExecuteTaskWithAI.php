@@ -6,6 +6,7 @@ namespace App\Actions;
 
 use App\Models\PlannedTask;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Log;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Facades\Prism;
 use Prism\Prism\Facades\Tool;
@@ -30,8 +31,17 @@ class ExecuteTaskWithAI
             )
             ->withStringParameter('message', 'The notification body with the full message content')
             ->using(function (string $title, string $message): string {
-                $this->sendPushNotification->handle($title, $message);
+                Log::debug('execute_task tool called', ['title' => $title]);
+
+                try {
+                    $this->sendPushNotification->handle($title, $message);
+                    Log::debug('execute_task: push notification sent');
+                } catch (\Throwable $e) {
+                    Log::error('execute_task: push notification failed', ['error' => $e->getMessage()]);
+                }
+
                 $this->storeMessage->handle('assistant', $message);
+                Log::debug('execute_task: message stored');
 
                 return 'Task executed: notification sent and message stored.';
             });
@@ -51,12 +61,20 @@ class ExecuteTaskWithAI
         - Używaj narzędzi od razu bez pytania o pozwolenie.
         PROMPT;
 
-        Prism::text()
+        Log::debug("ExecuteTaskWithAI: calling Prism for task #{$task->id}");
+
+        $response = Prism::text()
             ->using(Provider::OpenRouter, 'google/gemini-2.5-flash')
             ->withSystemPrompt($systemPrompt)
             ->withPrompt($task->instruction)
             ->withTools($tools)
             ->withMaxSteps(10)
             ->asText();
+
+        Log::debug("ExecuteTaskWithAI: Prism finished for task #{$task->id}", [
+            'steps' => $response->steps->count(),
+            'finishReason' => $response->finishReason->name,
+            'text' => mb_substr($response->text, 0, 200),
+        ]);
     }
 }
