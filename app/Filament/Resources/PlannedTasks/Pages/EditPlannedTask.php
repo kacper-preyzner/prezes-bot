@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\PlannedTasks\Pages;
 
 use App\Filament\Resources\PlannedTasks\PlannedTaskResource;
@@ -15,5 +17,10 @@ class EditPlannedTask extends EditRecord
         return [
             DeleteAction::make(),
         ];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        return CreatePlannedTask::buildInterval($data);
     }
 }

@@ -10,7 +10,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class AiMessagesToday extends StatsOverviewWidget
 {
-    protected null|string $pollingInterval = '1s';
+    protected ?string $pollingInterval = '1s';
 
     protected function getStats(): array
     {

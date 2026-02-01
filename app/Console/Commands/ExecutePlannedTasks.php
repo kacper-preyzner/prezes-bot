@@ -33,8 +33,14 @@ class ExecutePlannedTasks extends Command
                 $executor->handle($task);
             } finally {
                 $task->refresh();
-                if ($task->exists) {
-                    $task->update(['is_running' => false]);
+
+                if ($task->interval !== null) {
+                    $task->update([
+                        'execute_at' => $task->interval->nextExecuteAt($task->execute_at),
+                        'is_running' => false,
+                    ]);
+                } else {
+                    $task->delete();
                 }
             }
         }
