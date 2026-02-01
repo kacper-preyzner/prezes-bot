@@ -17,6 +17,7 @@ class AskAIController extends Controller
             'message' => $result['assistantMessage']->content,
             'user_message' => $result['userMessage'],
             'assistant_message' => $result['assistantMessage'],
+            'actions' => $result['actions'],
         ]);
     }
 }

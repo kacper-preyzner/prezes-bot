@@ -1,9 +1,9 @@
 import { API_URL, APP_TOKEN } from './env';
-import { Message } from '../types/chat';
+import { Action, Message } from '../types/chat';
 
 export async function sendMessage(
   prompt: string,
-): Promise<{ userMessage: Message; assistantMessage: Message }> {
+): Promise<{ userMessage: Message; assistantMessage: Message; actions: Action[] }> {
   const response = await fetch(`${API_URL}/api/ask`, {
     method: 'POST',
     headers: {
@@ -21,6 +21,7 @@ export async function sendMessage(
   return {
     userMessage: data.user_message,
     assistantMessage: data.assistant_message,
+    actions: data.actions ?? [],
   };
 }
 

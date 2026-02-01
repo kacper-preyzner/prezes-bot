@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Timer, Volume2, VolumeOff } from 'lucide-react-native';
+import { Volume2, VolumeOff } from 'lucide-react-native';
 import { setTimer } from '../modules/timer';
 import ChatBubble from '../components/ChatBubble';
 import ChatInput from '../components/ChatInput';
@@ -17,7 +17,21 @@ import TypingIndicator from '../components/TypingIndicator';
 import { sendMessage, fetchMessages, fetchNewMessages } from '../lib/api';
 import { speakText } from '../lib/tts';
 import { getAutoRead, setAutoRead as persistAutoRead } from '../lib/storage';
-import { Message } from '../types/chat';
+import { Action, Message } from '../types/chat';
+
+function formatDuration(seconds: number): string {
+  if (seconds >= 3600) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    return m > 0 ? `${h} godz. ${m} min` : `${h} godz.`;
+  }
+  if (seconds >= 60) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return s > 0 ? `${m} min ${s} sek` : `${m} min`;
+  }
+  return `${seconds} sek`;
+}
 
 export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -108,6 +122,23 @@ export default function ChatScreen() {
     }
   }, [loadingHistory, nextCursor]);
 
+  const executeActions = useCallback((actions: Action[]): Message[] => {
+    const timerMessages: Message[] = [];
+    for (const action of actions) {
+      if (action.type === 'set_timer') {
+        setTimer(action.seconds, action.message);
+        const label = formatDuration(action.seconds);
+        const id = -Date.now() - Math.random();
+        animatedIds.current.add(id);
+        const text = action.message
+          ? `Minutnik ustawiony na ${label} — ${action.message}`
+          : `Minutnik ustawiony na ${label}`;
+        timerMessages.push({ id, role: 'timer', content: text });
+      }
+    }
+    return timerMessages;
+  }, []);
+
   const handleSend = useCallback(async (text: string) => {
     setLoading(true);
     loadingRef.current = true;
@@ -116,9 +147,11 @@ export default function ChatScreen() {
     setMessages((prev) => [{ id: 0, role: 'user', content: text }, ...prev]);
 
     try {
-      const { userMessage, assistantMessage } = await sendMessage(text);
+      const { userMessage, assistantMessage, actions } = await sendMessage(text);
       animatedIds.current.add(assistantMessage.id);
+      const timerMessages = executeActions(actions);
       setMessages((prev) => [
+        ...timerMessages,
         assistantMessage,
         userMessage,
         ...prev.filter((m) => m.id !== 0),
@@ -145,9 +178,6 @@ export default function ChatScreen() {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}
     >
         <SafeAreaView edges={['top']} style={styles.headerRow}>
-          <Pressable onPress={() => setTimer(60, 'Minutnik testowy')} style={styles.toggleButton}>
-            <Timer size={24} color="#FF9500" />
-          </Pressable>
           <Pressable onPress={toggleAutoRead} style={styles.toggleButton}>
             {autoRead ? (
               <Volume2 size={24} color="#007AFF" />

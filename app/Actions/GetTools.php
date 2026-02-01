@@ -16,8 +16,23 @@ class GetTools
         protected WebSearch $webSearch,
     ) {}
 
-    public function handle()
+    /**
+     * @param  array<int, array<string, mixed>>  $actions  Collected client-side actions
+     */
+    public function handle(array &$actions = []): array
     {
+        $setTimerTool = Tool::as('set_timer')
+            ->for('Set a countdown timer on the user\'s device. Use when user asks to set a timer/minutnik/stoper.')
+            ->withNumberParameter('seconds', 'Timer duration in seconds')
+            ->withStringParameter('message', 'Short label for the timer, e.g. "Jajka", "Przerwa"')
+            ->using(function (int $seconds, string $message) use (&$actions): string {
+                Log::debug('set_timer called', compact('seconds', 'message'));
+
+                $actions[] = ['type' => 'set_timer', 'seconds' => $seconds, 'message' => $message];
+
+                return "Timer set for {$seconds} seconds with message: {$message}";
+            });
+
         $createPlannedTaskTool = Tool::as('create_planned_task')
             ->for('Plan task to execute later. IMPORTANT: Always create exactly ONE task per user request. If the user wants something on multiple days/times, use on_days_at_times with a schedule covering all days and times — do NOT create separate tasks.')
             ->withStringParameter(
@@ -71,6 +86,6 @@ class GetTools
             return $this->webSearch->handle($query);
         });
 
-        return [$createPlannedTaskTool, $webSearchTool];
+        return [$setTimerTool, $createPlannedTaskTool, $webSearchTool];
     }
 }
