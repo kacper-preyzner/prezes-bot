@@ -13,6 +13,7 @@ class PlannedTask extends Model
         return [
             'execute_at' => 'immutable_datetime',
             'repeating' => 'boolean',
+            'is_running' => 'boolean',
         ];
     }
 }

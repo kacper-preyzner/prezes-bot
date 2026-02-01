@@ -16,8 +16,27 @@ class ExecutePlannedTasks extends Command
 
     public function handle(ExecuteTaskWithAI $executor): void
     {
-        PlannedTask::where('execute_at', '<=', now())->each(
-            fn (PlannedTask $task) => $executor->handle($task),
-        );
+        $tasks = PlannedTask::where('execute_at', '<=', now())
+            ->where('is_running', false)
+            ->get();
+
+        foreach ($tasks as $task) {
+            $claimed = PlannedTask::where('id', $task->id)
+                ->where('is_running', false)
+                ->update(['is_running' => true]);
+
+            if ($claimed === 0) {
+                continue;
+            }
+
+            try {
+                $executor->handle($task);
+            } finally {
+                $task->refresh();
+                if ($task->exists) {
+                    $task->update(['is_running' => false]);
+                }
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Models\Message;
 use Carbon\CarbonImmutable;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Facades\Prism;
@@ -12,10 +13,16 @@ class AskAI
 {
     public function __construct(
         protected GetTools $getTools,
+        protected StoreMessage $storeMessage,
     ) {}
 
-    public function handle(string $prompt): string
+    /**
+     * @return array{userMessage: Message, assistantMessage: Message}
+     */
+    public function handle(string $prompt): array
     {
+        $userMessage = $this->storeMessage->handle('user', $prompt);
+
         $tools = $this->getTools->handle();
         $now = CarbonImmutable::now('Europe/Warsaw')->toDateTimeString();
         $systemPrompt = <<<PROMPT
@@ -37,6 +44,8 @@ class AskAI
             ->withMaxSteps(10)
             ->asText();
 
-        return $response->text;
+        $assistantMessage = $this->storeMessage->handle('assistant', $response->text);
+
+        return ['userMessage' => $userMessage, 'assistantMessage' => $assistantMessage];
     }
 }

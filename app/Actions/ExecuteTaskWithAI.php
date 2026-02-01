@@ -16,6 +16,7 @@ class ExecuteTaskWithAI
     public function __construct(
         protected GetTools $getTools,
         protected SendPushNotification $sendPushNotification,
+        protected StoreMessage $storeMessage,
     ) {}
 
     public function handle(PlannedTask $task): void
@@ -24,18 +25,19 @@ class ExecuteTaskWithAI
 
         $nextExecuteAt = null;
 
-        $sendNotificationTool = Tool::as('send_notification')
-            ->for('Send a push notification to the user. Generate a short, catchy title and a message body.')
+        $executeTaskTool = Tool::as('execute_task')
+            ->for('Send the task result to the user as a push notification and store it in chat history. Generate a short, catchy title and a message body.')
             ->withStringParameter(
                 'title',
                 'Short notification title, e.g. "Oto 5 trendów z dzisiaj specjalnie dla ciebie"',
             )
             ->withStringParameter('message', 'The notification body with the full message content')
             ->using(function (string $title, string $message): string {
-                Log::debug('Sending notification...');
+                Log::debug('Executing task: sending notification and storing message...');
                 $this->sendPushNotification->handle($title, $message);
+                $this->storeMessage->handle('assistant', $message);
 
-                return 'Notification sent.';
+                return 'Task executed: notification sent and message stored.';
             });
 
         $rescheduleTaskTool = Tool::as('reschedule_task')->for(
@@ -50,7 +52,7 @@ class ExecuteTaskWithAI
             return "Task rescheduled to {$nextExecuteAt->toDateTimeString()}";
         });
 
-        $tools[] = $sendNotificationTool;
+        $tools[] = $executeTaskTool;
         $tools[] = $rescheduleTaskTool;
 
         $now = CarbonImmutable::now('Europe/Warsaw')->toDateTimeString();
@@ -61,11 +63,11 @@ class ExecuteTaskWithAI
         $systemPrompt = <<<PROMPT
         AKTUALNY CZAS: {$now} (Europe/Warsaw).
 
-        Jesteś asystentką wykonującą zaplanowane zadania. Wykonaj poniższą instrukcję i wyślij wynik do użytkownika za pomocą narzędzia send_notification.
+        Jesteś asystentką wykonującą zaplanowane zadania. Wykonaj poniższą instrukcję i wyślij wynik do użytkownika za pomocą narzędzia execute_task.
 
         ZASADY:
         - Wykonaj instrukcję najlepiej jak potrafisz.
-        - ZAWSZE wyślij wynik do użytkownika za pomocą send_notification.
+        - ZAWSZE wyślij wynik do użytkownika za pomocą execute_task.
         - {$repeatingInfo}
         - Używaj narzędzi od razu bez pytania o pozwolenie.
         PROMPT;

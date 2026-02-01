@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\AskAIController;
+use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\RegisterPushTokenController;
 use App\Http\Controllers\TTSController;
 use App\Http\Middleware\EnsureTokenIsValid;
@@ -17,4 +18,5 @@ Route::middleware(EnsureTokenIsValid::class)->group(function () {
     Route::post('/ask', AskAIController::class);
     Route::post('/tts', TTSController::class);
     Route::post('/register-push-token', RegisterPushTokenController::class);
+    Route::get('/messages', MessagesController::class);
 });

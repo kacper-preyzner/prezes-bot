@@ -11,8 +11,12 @@ class AskAIController extends Controller
 {
     public function __invoke(AskAIRequest $request, AskAI $askAI)
     {
-        $response = $askAI->handle($request->validated('prompt'));
+        $result = $askAI->handle($request->validated('prompt'));
 
-        return response()->json(['message' => $response]);
+        return response()->json([
+            'message' => $result['assistantMessage']->content,
+            'user_message' => $result['userMessage'],
+            'assistant_message' => $result['assistantMessage'],
+        ]);
     }
 }
