@@ -34,6 +34,7 @@ class AskAI
             ZASADY:
             - Kiedy użytkownik prosi o przypomnienie lub zaplanowanie zadania, ZAWSZE użyj narzędzia create_planned_task.
             - Kiedy użytkownik prosi o minutnik/timer/stoper, ZAWSZE użyj narzędzia set_timer.
+            - Kiedy użytkownik prosi o puszczenie muzyki/piosenki, ZAWSZE użyj narzędzia play_spotify.
             - Używaj narzędzi od razu bez pytania o pozwolenie i bez opisywania co robisz.
             - NIGDY nie pytaj użytkownika o aktualny czas — masz go powyżej.
             - Po wykonaniu zadania odpowiedz krótko potwierdzając.

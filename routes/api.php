@@ -19,4 +19,10 @@ Route::middleware(EnsureTokenIsValid::class)->group(function () {
     Route::post('/tts', TTSController::class);
     Route::post('/register-push-token', RegisterPushTokenController::class);
     Route::get('/messages', MessagesController::class);
+
+    Route::get('/spotify/status', function () {
+        return response()->json([
+            'connected' => \App\Models\SpotifyToken::exists(),
+        ]);
+    });
 });

@@ -14,6 +14,7 @@ class GetTools
     public function __construct(
         protected CreatePlannedTask $createPlannedTask,
         protected WebSearch $webSearch,
+        protected PlaySpotify $playSpotify,
     ) {}
 
     /**
@@ -86,6 +87,22 @@ class GetTools
             return $this->webSearch->handle($query);
         });
 
-        return [$setTimerTool, $createPlannedTaskTool, $webSearchTool];
+        $playSpotifyTool = Tool::as('play_spotify')
+            ->for('Play a song/track on the user\'s Spotify. Use when the user asks to play music/song/piosenka/utwór.')
+            ->withStringParameter('query', 'Search query — song name, artist, or both')
+            ->using(function (string $query) use (&$actions): string {
+                Log::debug('play_spotify called', ['query' => $query]);
+
+                try {
+                    $result = $this->playSpotify->handle($query);
+                    $actions[] = ['type' => 'spotify_playing', 'track' => $result['track'], 'artist' => $result['artist']];
+
+                    return "Playing: {$result['artist']} — {$result['track']}";
+                } catch (\RuntimeException $e) {
+                    return "Spotify error: {$e->getMessage()}";
+                }
+            });
+
+        return [$setTimerTool, $createPlannedTaskTool, $webSearchTool, $playSpotifyTool];
     }
 }

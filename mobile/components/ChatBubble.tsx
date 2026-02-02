@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
-import { Timer } from 'lucide-react-native';
+import { Music, Timer } from 'lucide-react-native';
 import { Message } from '../types/chat';
 
 type ChatBubbleProps = Message & { animate?: boolean };
@@ -8,6 +8,7 @@ type ChatBubbleProps = Message & { animate?: boolean };
 export default function ChatBubble({ role, content, animate = false }: ChatBubbleProps) {
   const isUser = role === 'user';
   const isTimer = role === 'timer';
+  const isSpotify = role === 'spotify';
   const fadeAnim = useRef(new Animated.Value(animate ? 0 : 1)).current;
   const slideAnim = useRef(new Animated.Value(animate ? (isUser ? 40 : -40) : 0)).current;
   const scaleAnim = useRef(new Animated.Value(animate ? 0.85 : 1)).current;
@@ -38,11 +39,13 @@ export default function ChatBubble({ role, content, animate = false }: ChatBubbl
 
   const bubbleStyle = isTimer
     ? styles.timerBubble
-    : isUser
-      ? styles.userBubble
-      : styles.assistantBubble;
+    : isSpotify
+      ? styles.spotifyBubble
+      : isUser
+        ? styles.userBubble
+        : styles.assistantBubble;
 
-  const containerAlign = isTimer
+  const containerAlign = isTimer || isSpotify
     ? styles.timerContainer
     : isUser
       ? styles.userContainer
@@ -64,6 +67,11 @@ export default function ChatBubble({ role, content, animate = false }: ChatBubbl
           <View style={styles.timerContent}>
             <Timer size={18} color="#FF9500" />
             <Text style={styles.timerText}>{content}</Text>
+          </View>
+        ) : isSpotify ? (
+          <View style={styles.spotifyContent}>
+            <Music size={18} color="#1DB954" />
+            <Text style={styles.spotifyText}>{content}</Text>
           </View>
         ) : (
           <Text style={[styles.text, isUser ? styles.userText : styles.assistantText]}>
@@ -126,6 +134,22 @@ const styles = StyleSheet.create({
   },
   timerText: {
     color: '#FF9500',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  spotifyBubble: {
+    backgroundColor: 'rgba(29, 185, 84, 0.15)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(29, 185, 84, 0.3)',
+  },
+  spotifyContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  spotifyText: {
+    color: '#1DB954',
     fontSize: 14,
     fontWeight: '600',
   },
