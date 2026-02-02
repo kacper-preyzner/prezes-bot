@@ -9,7 +9,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Music, Volume2, VolumeOff } from 'lucide-react-native';
+import { Volume2, VolumeOff } from 'lucide-react-native';
+import SpotifyIcon from '../components/SpotifyIcon';
 import { setTimer } from '../modules/timer';
 import ChatBubble from '../components/ChatBubble';
 import ChatInput from '../components/ChatInput';
@@ -196,7 +197,7 @@ export default function ChatScreen() {
     >
         <SafeAreaView edges={['top']} style={styles.headerRow}>
           <Pressable onPress={handleConnectSpotify} style={styles.toggleButton}>
-            <Music size={24} color={spotifyConnected ? '#1DB954' : '#8E8E93'} />
+            <SpotifyIcon size={24} color={spotifyConnected ? '#1DB954' : '#8E8E93'} />
           </Pressable>
           <Pressable onPress={toggleAutoRead} style={styles.toggleButton}>
             {autoRead ? (

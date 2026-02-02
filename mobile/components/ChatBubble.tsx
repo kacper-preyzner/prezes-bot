@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
-import { Music, Timer } from 'lucide-react-native';
+import { Timer } from 'lucide-react-native';
+import SpotifyIcon from './SpotifyIcon';
 import { Message } from '../types/chat';
 
 type ChatBubbleProps = Message & { animate?: boolean };
@@ -70,7 +71,7 @@ export default function ChatBubble({ role, content, animate = false }: ChatBubbl
           </View>
         ) : isSpotify ? (
           <View style={styles.spotifyContent}>
-            <Music size={18} color="#1DB954" />
+            <SpotifyIcon size={18} color="#1DB954" />
             <Text style={styles.spotifyText}>{content}</Text>
           </View>
         ) : (
