@@ -17,6 +17,7 @@ class ExecuteTaskWithAI
         protected GetTools $getTools,
         protected SendPushNotification $sendPushNotification,
         protected StoreMessage $storeMessage,
+        protected GetSettingsSet $getSettingsSet,
     ) {}
 
     public function handle(PlannedTask $task): void
@@ -61,10 +62,13 @@ class ExecuteTaskWithAI
         - Używaj narzędzi od razu bez pytania o pozwolenie.
         PROMPT;
 
-        Log::debug("ExecuteTaskWithAI: calling Prism for task #{$task->id}");
+        $settings = $this->getSettingsSet->handle();
+        $model = $settings->open_router_llm_model;
+
+        Log::debug("ExecuteTaskWithAI: calling Prism for task #{$task->id}", ['model' => $model]);
 
         $response = Prism::text()
-            ->using(Provider::OpenRouter, 'google/gemini-2.5-flash')
+            ->using(Provider::OpenRouter, $model)
             ->withSystemPrompt($systemPrompt)
             ->withPrompt($task->instruction)
             ->withTools($tools)

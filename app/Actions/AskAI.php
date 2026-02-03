@@ -6,6 +6,7 @@ namespace App\Actions;
 
 use App\Models\Message;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Log;
 use Prism\Prism\Enums\Provider;
 use Prism\Prism\Facades\Prism;
 
@@ -15,6 +16,7 @@ class AskAI
         protected GetTools $getTools,
         protected StoreMessage $storeMessage,
         protected GetLastMessages $getLastMessages,
+        protected GetSettingsSet $getSettingsSet,
     ) {}
 
     /**
@@ -42,8 +44,13 @@ class AskAI
         PROMPT;
         $messages = $this->getLastMessages->handle();
 
+        $settings = $this->getSettingsSet->handle();
+        $model = $settings->open_router_llm_model;
+
+        Log::debug('AskAI: using model', ['model' => $model]);
+
         $response = Prism::text()
-            ->using(Provider::OpenRouter, 'google/gemini-2.5-flash')
+            ->using(Provider::OpenRouter, $model)
             ->withSystemPrompt($systemPrompt)
             ->withMessages($messages)
             ->withTools($tools)

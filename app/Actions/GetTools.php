@@ -56,7 +56,7 @@ class GetTools
             - {"type":"every_month_at","day":15,"time":"10:00"}
             - {"type":"on_days_at_times","schedule":{"4":["14:00","20:00"],"5":["16:00"]}} — PREFERRED for multiple days/times per week (keys: 0=Sun..6=Sat). Use this instead of creating multiple tasks!
             DESC)
-            ->using(function (string $instruction, string $executeAt, null|string $interval = null): string {
+            ->using(function (string $instruction, string $executeAt, ?string $interval = null): string {
                 Log::debug('create_planned_task called', compact('instruction', 'executeAt', 'interval'));
 
                 $parsedInterval = null;
@@ -141,6 +141,23 @@ class GetTools
             return "User answered: \"{$user_answer}\"\nCorrect answer: \"{$question['answer']}\"\nCompare semantically: if the user's answer conveys the same meaning (even with different wording, abbreviations, or less detail), it is CORRECT. Only mark WRONG if the meaning is fundamentally different or incorrect.";
         });
 
-        return [$setTimerTool, $createPlannedTaskTool, $webSearchTool, $playSpotifyTool, $bssRandomQuestionTool, $bssCheckAnswerTool];
+        $bssGetQuestionByIdTool = Tool::as('bss_quiz_get_question_by_id')->for(
+            'Gets a specific BSS quiz question by its ID. Use when you need to retrieve a question you asked before.',
+        )->withNumberParameter(
+            'question_id',
+            'The question ID to retrieve',
+        )->using(function (int $question_id): string {
+            Log::debug('bss_quiz_get_question_by_id called', compact('question_id'));
+
+            $question = $this->getBSSQuestionById->handle($question_id);
+
+            if ($question === null) {
+                return "Question with ID {$question_id} not found.";
+            }
+
+            return "Question {$question['id']}: {$question['question']}\nAnswer: {$question['answer']}";
+        });
+
+        return [$setTimerTool, $createPlannedTaskTool, $webSearchTool, $playSpotifyTool, $bssRandomQuestionTool, $bssCheckAnswerTool, $bssGetQuestionByIdTool];
     }
 }
