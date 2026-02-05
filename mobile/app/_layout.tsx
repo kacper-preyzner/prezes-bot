@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useFonts, SpaceMono_400Regular, SpaceMono_700Bold } from '@expo-google-fonts/space-mono';
 import {
   configureNotifications,
   syncPushTokenWithBackend,
@@ -9,22 +11,23 @@ import {
 configureNotifications();
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    SpaceMono_400Regular,
+    SpaceMono_700Bold,
+  });
+
   useEffect(() => {
     syncPushTokenWithBackend();
     const cleanup = setupNotificationListeners();
     return cleanup;
   }, []);
 
+  if (!fontsLoaded) return null;
+
   return (
-    <Stack>
-      <Stack.Screen
-        name="index"
-        options={{
-          title: 'Prezes Bot',
-          headerStyle: { backgroundColor: '#1C1C1E' },
-          headerTintColor: '#FFFFFF',
-        }}
-      />
-    </Stack>
+    <>
+      <StatusBar style="light" />
+      <Stack screenOptions={{ headerShown: false }} />
+    </>
   );
 }

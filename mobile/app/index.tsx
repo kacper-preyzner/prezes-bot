@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  Animated as RNAnimated,
   FlatList,
   KeyboardAvoidingView,
   Platform,
   Pressable,
   StyleSheet,
-  ActivityIndicator,
+  Text,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Volume2, VolumeOff } from 'lucide-react-native';
 import SpotifyIcon from '../components/SpotifyIcon';
+import CyberBackground from '../components/CyberBackground';
+import GlitchText from '../components/GlitchText';
 import { setTimer } from '../modules/timer';
 import ChatBubble from '../components/ChatBubble';
 import ChatInput from '../components/ChatInput';
@@ -33,6 +36,33 @@ function formatDuration(seconds: number): string {
     return s > 0 ? `${m} min ${s} sek` : `${m} min`;
   }
   return `${seconds} sek`;
+}
+
+function StatusDot({ active }: { active: boolean }) {
+  const pulse = useRef(new RNAnimated.Value(0)).current;
+
+  useEffect(() => {
+    if (!active) return;
+    RNAnimated.loop(
+      RNAnimated.sequence([
+        RNAnimated.timing(pulse, { toValue: 1, duration: 1500, useNativeDriver: true }),
+        RNAnimated.timing(pulse, { toValue: 0, duration: 1500, useNativeDriver: true }),
+      ]),
+    ).start();
+  }, [active]);
+
+  const opacity = active
+    ? pulse.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] })
+    : 0.2;
+
+  return (
+    <RNAnimated.View
+      style={[
+        styles.statusDot,
+        { backgroundColor: active ? '#0f0' : '#ff1744', opacity },
+      ]}
+    />
+  );
 }
 
 export default function ChatScreen() {
@@ -58,7 +88,6 @@ export default function ChatScreen() {
     if (!hasLoadedInitial.current) {
       hasLoadedInitial.current = true;
       fetchMessages().then(({ data, next_cursor }) => {
-        // API returns newest-first, which is what inverted FlatList expects
         setMessages(data);
         setNextCursor(next_cursor);
       });
@@ -93,7 +122,6 @@ export default function ChatScreen() {
             if (newMsgs.length === 0) return prev;
 
             newMsgs.forEach((m) => animatedIds.current.add(m.id));
-            // Prepend new messages (newest first for inverted list)
             return [...newMsgs.reverse(), ...prev];
           });
         }
@@ -118,7 +146,6 @@ export default function ChatScreen() {
     setLoadingHistory(true);
     try {
       const { data, next_cursor } = await fetchMessages(nextCursor);
-      // Append older messages at the end (bottom of inverted list = older)
       setMessages((prev) => [...prev, ...data]);
       setNextCursor(next_cursor);
     } finally {
@@ -161,7 +188,6 @@ export default function ChatScreen() {
     setLoading(true);
     loadingRef.current = true;
 
-    // Optimistic user message at the top (newest) of inverted list
     setMessages((prev) => [{ id: 0, role: 'user', content: text }, ...prev]);
 
     try {
@@ -190,23 +216,47 @@ export default function ChatScreen() {
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior="padding"
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 80}
-    >
-        <SafeAreaView edges={['top']} style={styles.headerRow}>
-          <Pressable onPress={handleConnectSpotify} style={styles.toggleButton}>
-            <SpotifyIcon size={24} color={spotifyConnected ? '#1DB954' : '#8E8E93'} />
-          </Pressable>
-          <Pressable onPress={toggleAutoRead} style={styles.toggleButton}>
-            {autoRead ? (
-              <Volume2 size={24} color="#007AFF" />
-            ) : (
-              <VolumeOff size={24} color="#8E8E93" />
-            )}
-          </Pressable>
+    <View style={styles.root}>
+      <CyberBackground />
+
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
+        {/* Custom cyberpunk header */}
+        <SafeAreaView edges={['top']} style={styles.header}>
+          <View style={styles.headerLeft}>
+            <GlitchText text="PREZES BOT" />
+            <View style={styles.statusRow}>
+              <StatusDot active={!loading} />
+              <Text style={styles.statusText}>
+                {loading ? 'PROCESSING' : 'SYS ONLINE'}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.headerRight}>
+            <Pressable onPress={handleConnectSpotify} style={styles.headerBtn}>
+              <SpotifyIcon size={20} color={spotifyConnected ? '#1DB954' : '#333'} />
+            </Pressable>
+            <Pressable onPress={toggleAutoRead} style={styles.headerBtn}>
+              {autoRead ? (
+                <Volume2 size={20} color="#ff1744" />
+              ) : (
+                <VolumeOff size={20} color="#333" />
+              )}
+            </Pressable>
+          </View>
         </SafeAreaView>
+
+        {/* Divider line */}
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <View style={styles.dividerDot} />
+          <View style={styles.dividerLine} />
+        </View>
+
+        {/* Messages */}
         <FlatList
           ref={flatListRef}
           data={messages}
@@ -221,34 +271,89 @@ export default function ChatScreen() {
           ListFooterComponent={
             loadingHistory ? (
               <View style={styles.loadingHistory}>
-                <ActivityIndicator size="small" color="#007AFF" />
+                <Text style={styles.loadingText}>{'// LOADING HISTORY'}</Text>
               </View>
             ) : null
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyIcon}>{'>'}_</Text>
+              <Text style={styles.emptyText}>{'Rozpocznij rozmowę z Prezesem'}</Text>
+              <Text style={styles.emptySubtext}>{'Mów, pisz, planuj'}</Text>
+            </View>
           }
         />
         {loading && <TypingIndicator />}
         <SafeAreaView edges={['bottom']}>
           <ChatInput onSend={handleSend} disabled={loading} />
         </SafeAreaView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: '#080808',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#1C1C1E',
   },
-  headerRow: {
+  header: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
     paddingHorizontal: 16,
-    paddingBottom: 4,
+    paddingBottom: 12,
+    paddingTop: 8,
+  },
+  headerLeft: {
+    gap: 6,
+  },
+  headerRight: {
+    flexDirection: 'row',
     gap: 4,
   },
-  toggleButton: {
+  headerBtn: {
     padding: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,23,68,0.1)',
+    borderRadius: 2,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  statusDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  statusText: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 9,
+    letterSpacing: 2,
+    color: 'rgba(255,255,255,0.3)',
+    textTransform: 'uppercase',
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  dividerLine: {
+    flex: 1,
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: 'rgba(255,23,68,0.15)',
+  },
+  dividerDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'rgba(255,23,68,0.3)',
+    marginHorizontal: 8,
   },
   list: {
     flexGrow: 1,
@@ -256,7 +361,38 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   loadingHistory: {
-    paddingVertical: 8,
+    paddingVertical: 12,
     alignItems: 'center',
+  },
+  loadingText: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 10,
+    letterSpacing: 1,
+    color: 'rgba(255,23,68,0.4)',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 80,
+    gap: 8,
+  },
+  emptyIcon: {
+    fontFamily: 'SpaceMono_700Bold',
+    fontSize: 32,
+    color: 'rgba(255,23,68,0.2)',
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.3)',
+  },
+  emptySubtext: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.15)',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
   },
 });

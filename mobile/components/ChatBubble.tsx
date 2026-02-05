@@ -64,20 +64,34 @@ export default function ChatBubble({ role, content, animate = false }: ChatBubbl
           },
         ]}
       >
+        {/* Corner accents on assistant bubbles */}
+        {!isUser && !isTimer && !isSpotify && (
+          <>
+            <View style={styles.cornerTL} />
+            <View style={styles.cornerBR} />
+          </>
+        )}
+
+        {/* User bubble glow accent */}
+        {isUser && <View style={styles.userAccent} />}
+
         {isTimer ? (
-          <View style={styles.timerContent}>
-            <Timer size={18} color="#FF9500" />
+          <View style={styles.actionContent}>
+            <Timer size={14} color="#ff6b35" />
             <Text style={styles.timerText}>{content}</Text>
           </View>
         ) : isSpotify ? (
-          <View style={styles.spotifyContent}>
-            <SpotifyIcon size={18} color="#1DB954" />
+          <View style={styles.actionContent}>
+            <SpotifyIcon size={14} color="#1DB954" />
             <Text style={styles.spotifyText}>{content}</Text>
           </View>
+        ) : !isUser ? (
+          <View style={styles.assistantInner}>
+            <Text style={styles.promptPrefix}>{'>'}</Text>
+            <Text style={[styles.text, styles.assistantText]}>{content}</Text>
+          </View>
         ) : (
-          <Text style={[styles.text, isUser ? styles.userText : styles.assistantText]}>
-            {content}
-          </Text>
+          <Text style={[styles.text, styles.userText]}>{content}</Text>
         )}
       </Animated.View>
     </View>
@@ -87,7 +101,7 @@ export default function ChatBubble({ role, content, animate = false }: ChatBubbl
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingVertical: 3,
   },
   userContainer: {
     alignItems: 'flex-end',
@@ -96,62 +110,101 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   bubble: {
-    maxWidth: '80%',
+    maxWidth: '82%',
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: 16,
+    borderRadius: 4,
+    position: 'relative',
   },
   userBubble: {
-    backgroundColor: '#007AFF',
-    borderBottomRightRadius: 4,
+    backgroundColor: '#ff1744',
+    borderBottomRightRadius: 0,
+    overflow: 'hidden',
+  },
+  userAccent: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 20,
+    height: 2,
+    backgroundColor: 'rgba(255,255,255,0.3)',
   },
   assistantBubble: {
-    backgroundColor: '#2C2C2E',
-    borderBottomLeftRadius: 4,
+    backgroundColor: 'rgba(17,17,17,0.9)',
+    borderBottomLeftRadius: 0,
+    borderWidth: 1,
+    borderColor: 'rgba(255,23,68,0.12)',
+  },
+  assistantInner: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  promptPrefix: {
+    fontFamily: 'SpaceMono_700Bold',
+    fontSize: 14,
+    lineHeight: 22,
+    color: 'rgba(255,23,68,0.4)',
+  },
+  cornerTL: {
+    position: 'absolute',
+    top: -1,
+    left: -1,
+    width: 8,
+    height: 8,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: '#ff1744',
+  },
+  cornerBR: {
+    position: 'absolute',
+    bottom: -1,
+    right: -1,
+    width: 8,
+    height: 8,
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
+    borderColor: '#ff6b35',
   },
   text: {
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 22,
+    fontFamily: 'SpaceMono_400Regular',
+    flexShrink: 1,
   },
   userText: {
     color: '#FFFFFF',
   },
   assistantText: {
-    color: '#FFFFFF',
+    color: 'rgba(255,255,255,0.85)',
   },
   timerContainer: {
     alignItems: 'center',
   },
   timerBubble: {
-    backgroundColor: 'rgba(255, 149, 0, 0.15)',
-    borderRadius: 12,
+    backgroundColor: 'rgba(255,107,53,0.08)',
+    borderRadius: 2,
     borderWidth: 1,
-    borderColor: 'rgba(255, 149, 0, 0.3)',
+    borderColor: 'rgba(255,107,53,0.25)',
   },
-  timerContent: {
+  actionContent: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
   timerText: {
-    color: '#FF9500',
-    fontSize: 14,
-    fontWeight: '600',
+    color: '#ff6b35',
+    fontSize: 12,
+    fontFamily: 'SpaceMono_700Bold',
   },
   spotifyBubble: {
-    backgroundColor: 'rgba(29, 185, 84, 0.15)',
-    borderRadius: 12,
+    backgroundColor: 'rgba(29,185,84,0.08)',
+    borderRadius: 2,
     borderWidth: 1,
-    borderColor: 'rgba(29, 185, 84, 0.3)',
-  },
-  spotifyContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    borderColor: 'rgba(29,185,84,0.25)',
   },
   spotifyText: {
     color: '#1DB954',
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 12,
+    fontFamily: 'SpaceMono_700Bold',
   },
 });

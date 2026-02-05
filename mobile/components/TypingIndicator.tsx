@@ -1,68 +1,39 @@
 import { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
-
-const DOT_SIZE = 8;
-const DOTS = [0, 1, 2];
+import { Animated, StyleSheet, Text, View } from 'react-native';
 
 export default function TypingIndicator() {
-  const anims = useRef(DOTS.map(() => new Animated.Value(0))).current;
+  const cursorOpacity = useRef(new Animated.Value(1)).current;
+  const dotsAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const animations = anims.map((anim, i) =>
-      Animated.loop(
-        Animated.sequence([
-          Animated.delay(i * 150),
-          Animated.timing(anim, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(anim, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.delay((DOTS.length - 1 - i) * 150),
-        ]),
-      ),
-    );
+    // Blinking cursor
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(cursorOpacity, { toValue: 0, duration: 400, useNativeDriver: true }),
+        Animated.timing(cursorOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+      ]),
+    ).start();
 
-    Animated.parallel(animations).start();
-
-    return () => animations.forEach((a) => a.stop());
+    // Dots cycling
+    Animated.loop(
+      Animated.timing(dotsAnim, {
+        toValue: 3,
+        duration: 1200,
+        useNativeDriver: false,
+      }),
+    ).start();
   }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.bubble}>
-        {anims.map((anim, i) => (
-          <Animated.View
-            key={i}
-            style={[
-              styles.dot,
-              {
-                opacity: anim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0.3, 1],
-                }),
-                transform: [
-                  {
-                    translateY: anim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, -4],
-                    }),
-                  },
-                  {
-                    scale: anim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [1, 1.2],
-                    }),
-                  },
-                ],
-              },
-            ]}
-          />
-        ))}
+        {/* Corner accents */}
+        <View style={styles.cornerTL} />
+        <View style={styles.cornerBR} />
+
+        <Text style={styles.prefix}>{'>'}</Text>
+        <Text style={styles.text}> przetwarzanie</Text>
+        <Animated.Text style={[styles.cursor, { opacity: cursorOpacity }]}>_</Animated.Text>
       </View>
     </View>
   );
@@ -71,23 +42,54 @@ export default function TypingIndicator() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingVertical: 3,
     alignItems: 'flex-start',
   },
   bubble: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2C2C2E',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 16,
-    borderBottomLeftRadius: 4,
-    gap: 5,
+    backgroundColor: 'rgba(17,17,17,0.9)',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 4,
+    borderBottomLeftRadius: 0,
+    borderWidth: 1,
+    borderColor: 'rgba(255,23,68,0.12)',
+    position: 'relative',
   },
-  dot: {
-    width: DOT_SIZE,
-    height: DOT_SIZE,
-    borderRadius: DOT_SIZE / 2,
-    backgroundColor: '#8E8E93',
+  cornerTL: {
+    position: 'absolute',
+    top: -1,
+    left: -1,
+    width: 8,
+    height: 8,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
+    borderColor: '#ff1744',
+  },
+  cornerBR: {
+    position: 'absolute',
+    bottom: -1,
+    right: -1,
+    width: 8,
+    height: 8,
+    borderBottomWidth: 1,
+    borderRightWidth: 1,
+    borderColor: '#ff6b35',
+  },
+  prefix: {
+    fontFamily: 'SpaceMono_700Bold',
+    fontSize: 14,
+    color: 'rgba(255,23,68,0.4)',
+  },
+  text: {
+    fontFamily: 'SpaceMono_400Regular',
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.35)',
+  },
+  cursor: {
+    fontFamily: 'SpaceMono_700Bold',
+    fontSize: 14,
+    color: '#ff1744',
   },
 });
