@@ -8,6 +8,6 @@ interface Skill
 {
     public function systemPrompt(): string;
 
-    /** @return array<int, \Prism\Prism\Tool\ProviderTool> */
+    /** @return array<int, \Prism\Prism\Tool> */
     public function tools(): array;
 }

@@ -17,6 +17,7 @@ Prezes Bot — AI assistant with a Laravel 12 REST API backend and an Expo (Reac
 - `php artisan serve` — API server only
 - `php artisan schedule:work` — run scheduler (executes planned tasks every 2 seconds)
 - `./vendor/bin/pint` — fix code style (Laravel preset)
+- `composer analyse` — run PHPStan static analysis (level 5, Larastan preset)
 
 ### Mobile (from `mobile/`)
 - `bun start` — Expo dev server
@@ -58,7 +59,8 @@ The AI (Gemini) has access to tools defined in `GetTools` as Prism `ProviderTool
 
 ## Code Conventions
 
-- PHP: strict types (`declare(strict_types=1)`) in all files, Laravel Pint for formatting
+- PHP: strict types (`declare(strict_types=1)`) in all files, Laravel Pint for formatting, PHPStan level 5 (Larastan) for static analysis
+- After changing PHP code, run `composer analyse` to verify there are no PHPStan errors. Add `@property` PHPDoc on models for cast attributes when needed.
 - TypeScript: strict mode enabled
 - Controllers are invokable (single `__invoke` method)
 - Form requests handle validation (`app/Http/Requests/`)

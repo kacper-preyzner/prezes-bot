@@ -16,6 +16,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 
+/** @property \Filament\Schemas\Schema $form */
 class Settings extends Page implements HasForms
 {
     use InteractsWithForms;

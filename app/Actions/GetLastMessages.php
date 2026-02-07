@@ -23,9 +23,9 @@ class GetLastMessages
             ->get()
             ->reverse()
             ->values()
-            ->map(fn (Message $message) => match ($message->role) {
+            ->map(fn(Message $message) => match ($message->role) {
                 'user' => new UserMessage($message->content),
-                'assistant' => new AssistantMessage($message->content),
+                default => new AssistantMessage($message->content),
             })
             ->all();
     }

@@ -6,8 +6,13 @@ namespace App\Models;
 
 use App\Intervals\Interval;
 use App\Intervals\IntervalFactory;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property CarbonImmutable $execute_at
+ * @property array<string, mixed>|null $interval
+ */
 class PlannedTask extends Model
 {
     protected function casts(): array

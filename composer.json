@@ -17,6 +17,7 @@
 	},
 	"require-dev": {
 		"fakerphp/faker": "^1.23",
+		"larastan/larastan": "^3.0",
 		"laravel/pail": "^1.2.2",
 		"laravel/pint": "^1.24",
 		"laravel/sail": "^1.41",
@@ -50,6 +51,7 @@
 			"npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74,#a3e635\" \"php artisan serve --host=0.0.0.0\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"npm run dev\" \"php artisan schedule:work -q\" --names=server,queue,logs,vite,scheduler --kill-others"
 		],
 		"format": ["./vendor/bin/pint"],
+		"analyse": ["./vendor/bin/phpstan analyse --memory-limit=512M"],
 		"test": ["@php artisan config:clear --ansi", "@php artisan test"],
 		"post-autoload-dump": [
 			"Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
