@@ -22,7 +22,8 @@ class ExecuteTaskWithAI
 
     public function handle(PlannedTask $task): void
     {
-        $tools = $this->getTools->handle();
+        $result = $this->getTools->handle();
+        $tools = $result['tools'];
 
         $executeTaskTool = Tool::as('execute_task')
             ->for('Send the task result to the user as a push notification and store it in chat history. Generate a short, catchy title and a message body.')

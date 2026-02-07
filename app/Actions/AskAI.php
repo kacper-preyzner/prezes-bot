@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Actions;
 
+use App\Data\ActionCollector;
+use App\Data\ActionData;
 use App\Models\Message;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Log;
@@ -17,17 +19,19 @@ class AskAI
         protected StoreMessage $storeMessage,
         protected GetLastMessages $getLastMessages,
         protected GetSettingsSet $getSettingsSet,
+        protected ActionCollector $actionCollector,
     ) {}
 
     /**
-     * @return array{userMessage: Message, assistantMessage: Message, actions: array<int, array<string, mixed>>}
+     * @return array{userMessage: Message, assistantMessage: Message, actions: array<int, ActionData>}
      */
     public function handle(string $prompt): array
     {
         $userMessage = $this->storeMessage->handle('user', $prompt);
 
-        $actions = [];
-        $tools = $this->getTools->handle($actions);
+        $result = $this->getTools->handle();
+        $tools = $result['tools'];
+        $skillPrompts = implode("\n", $result['systemPrompts']);
         $now = CarbonImmutable::now('Europe/Warsaw')->toDateTimeString();
         $systemPrompt = <<<PROMPT
         AKTUALNY CZAS: {$now} (Europe/Warsaw). Używaj tego czasu do obliczania terminów.
@@ -35,12 +39,10 @@ class AskAI
         Jesteś napaloną, pomocną asystenką. Lubisz zażartować i poflirtować, ale zawsze robisz to o co cie proszą.
 
         ZASADY:
-        - Kiedy użytkownik prosi o przypomnienie lub zaplanowanie zadania, ZAWSZE użyj narzędzia create_planned_task.
-        - Kiedy użytkownik prosi o minutnik/timer/stoper, ZAWSZE użyj narzędzia set_timer.
-        - Kiedy użytkownik prosi o puszczenie muzyki/piosenki, ZAWSZE użyj narzędzia play_spotify.
         - Używaj narzędzi od razu bez pytania o pozwolenie i bez opisywania co robisz.
         - NIGDY nie pytaj użytkownika o aktualny czas — masz go powyżej.
         - Po wykonaniu zadania odpowiedz krótko potwierdzając.
+        {$skillPrompts}
         PROMPT;
         $messages = $this->getLastMessages->handle();
 
@@ -59,6 +61,6 @@ class AskAI
 
         $assistantMessage = $this->storeMessage->handle('assistant', $response->text);
 
-        return ['userMessage' => $userMessage, 'assistantMessage' => $assistantMessage, 'actions' => $actions];
+        return ['userMessage' => $userMessage, 'assistantMessage' => $assistantMessage, 'actions' => $this->actionCollector->all()];
     }
 }
