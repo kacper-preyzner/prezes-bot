@@ -23,17 +23,43 @@
         overflow-x: hidden;
     }
 
+    * {
+        scrollbar-width: auto;
+        scrollbar-color: #ff1744 #0c0c0c;
+    }
+
     ::-webkit-scrollbar {
-        width: 6px;
+        width: 12px;
     }
     ::-webkit-scrollbar-track {
-        background: #0a0a0a;
+        background:
+            repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 3px,
+                rgba(255, 23, 68, 0.03) 3px,
+                rgba(255, 23, 68, 0.03) 4px
+            ),
+            #0a0a0a;
+        border-left: 1px solid rgba(255, 23, 68, 0.15);
     }
     ::-webkit-scrollbar-thumb {
-        background: #333;
-        border-radius: 3px;
+        background: linear-gradient(180deg, #ff1744, #ff6b35, #ff1744);
+        border: 1px solid rgba(255, 23, 68, 0.4);
+        border-radius: 0;
+        box-shadow:
+            -2px 0 8px rgba(255, 23, 68, 0.3),
+            inset 0 0 6px rgba(255, 107, 53, 0.2);
     }
     ::-webkit-scrollbar-thumb:hover {
-        background: #555;
+        background: linear-gradient(180deg, #ff2d58, #ff8a56, #ff2d58);
+        border-color: rgba(255, 23, 68, 0.6);
+        box-shadow:
+            -3px 0 14px rgba(255, 23, 68, 0.5),
+            0 0 20px rgba(255, 23, 68, 0.2),
+            inset 0 0 8px rgba(255, 107, 53, 0.3);
+    }
+    ::-webkit-scrollbar-corner {
+        background: #0a0a0a;
     }
 }
