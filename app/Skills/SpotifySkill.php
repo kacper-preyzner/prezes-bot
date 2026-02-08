@@ -25,27 +25,27 @@ class SpotifySkill implements Skill
     public function tools(): array
     {
         return [
-            Tool::as('play_spotify')
-                ->for(
-                    'Play a song/track on the user\'s Spotify. Use when the user asks to play music/song/piosenka/utwór.',
-                )
-                ->withStringParameter('query', 'Search query — song name, artist, or both')
-                ->using(function (string $query): string {
-                    Log::debug('play_spotify called', ['query' => $query]);
+            Tool::as('play_spotify')->for(
+                'Play a song/track on the user\'s Spotify. Use when the user asks to play music/song/piosenka/utwór.',
+            )->withStringParameter(
+                'query',
+                'Search query — song name, artist, or both',
+            )->using(function (string $query): string {
+                Log::debug('play_spotify called', ['query' => $query]);
 
-                    try {
-                        $result = $this->playSpotify->handle($query);
-                        $this->actionCollector->add(new ActionData(
-                            type: 'spotify_playing',
-                            track: $result['track'],
-                            artist: $result['artist'],
-                        ));
+                try {
+                    $result = $this->playSpotify->handle($query);
+                    $this->actionCollector->add(new ActionData(
+                        type: 'spotify_playing',
+                        track: $result['track'],
+                        artist: $result['artist'],
+                    ));
 
-                        return "Playing: {$result['artist']} — {$result['track']}";
-                    } catch (\RuntimeException $e) {
-                        return "Spotify error: {$e->getMessage()}";
-                    }
-                }),
+                    return "Playing: {$result['artist']} — {$result['track']}";
+                } catch (\RuntimeException $e) {
+                    return "Spotify error: {$e->getMessage()}";
+                }
+            }),
         ];
     }
 }
