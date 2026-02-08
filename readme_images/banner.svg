@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 420" width="800">
+  <title>PREZES BOT</title>
+  <style>
+    text { font-family: Consolas, 'Courier New', monospace; }
+  </style>
+  <defs>
+    <linearGradient id="sep" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#080808"/>
+      <stop offset="15%" stop-color="#FF1744"/>
+      <stop offset="50%" stop-color="#FF6B35"/>
+      <stop offset="85%" stop-color="#FF1744"/>
+      <stop offset="100%" stop-color="#080808"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1" fill="white" opacity="0.015"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="420" rx="6" fill="#080808"/>
+  <rect width="800" height="420" rx="6" fill="url(#scan)"/>
+
+  <!-- Corner decorations -->
+  <polyline points="18,32 18,12 38,12" fill="none" stroke="#FF1744" stroke-width="1.5" opacity="0.7"/>
+  <polyline points="762,12 782,12 782,32" fill="none" stroke="#FF1744" stroke-width="1.5" opacity="0.7"/>
+  <polyline points="18,388 18,408 38,408" fill="none" stroke="#FF6B35" stroke-width="1.5" opacity="0.7"/>
+  <polyline points="762,408 782,408 782,388" fill="none" stroke="#FF6B35" stroke-width="1.5" opacity="0.7"/>
+
+  <!-- Boot sequence -->
+  <text x="400" y="42" text-anchor="middle" font-size="13">
+    <tspan fill="#FF1744">></tspan><tspan fill="#ccc"> INICJALIZACJA SYSTEMU...</tspan>
+  </text>
+  <text x="400" y="64" text-anchor="middle" font-size="13">
+    <tspan fill="#FF6B35">></tspan><tspan fill="#ccc"> ŁĄCZE NEURALNE AKTYWNE</tspan>
+  </text>
+  <text x="400" y="86" text-anchor="middle" font-size="13">
+    <tspan fill="#FF1744">></tspan><tspan fill="#ccc"> WSZYSTKIE SYSTEMY SPRAWNE</tspan>
+  </text>
+
+  <!-- Separator 1 -->
+  <line x1="50" y1="108" x2="750" y2="108" stroke="url(#sep)" stroke-width="1"/>
+  <rect x="397" y="105" width="6" height="6" fill="#FF6B35" transform="rotate(45,400,108)" opacity="0.6"/>
+
+  <!-- Column headers -->
+  <text x="200" y="140" text-anchor="middle" font-size="13" fill="#FF1744" font-weight="bold">// BACKEND SKILLS</text>
+  <text x="600" y="140" text-anchor="middle" font-size="13" fill="#FF6B35" font-weight="bold">// APLIKACJA MOBILNA</text>
+
+  <!-- Vertical divider -->
+  <line x1="400" y1="118" x2="400" y2="272" stroke="#1a1a1a" stroke-width="1"/>
+
+  <!-- Backend items -->
+  <text x="65" y="168" font-size="11.5" fill="#FF6B35">Czat AI</text>
+  <text x="175" y="168" font-size="11.5" fill="#777">Gemini 2.5 Flash</text>
+
+  <text x="65" y="190" font-size="11.5" fill="#FF6B35">Głos</text>
+  <text x="175" y="190" font-size="11.5" fill="#777">ElevenLabs TTS</text>
+
+  <text x="65" y="212" font-size="11.5" fill="#FF6B35">Muzyka</text>
+  <text x="175" y="212" font-size="11.5" fill="#777">Spotify API</text>
+
+  <text x="65" y="234" font-size="11.5" fill="#FF6B35">Szukaj</text>
+  <text x="175" y="234" font-size="11.5" fill="#777">Perplexity Sonar</text>
+
+  <text x="65" y="256" font-size="11.5" fill="#FF6B35">Zadania</text>
+  <text x="175" y="256" font-size="11.5" fill="#777">Zaplanowane AI Jobs</text>
+
+  <text x="65" y="278" font-size="11.5" fill="#FF6B35">Quiz</text>
+  <text x="175" y="278" font-size="11.5" fill="#777">Egzamin BSS</text>
+
+  <!-- Mobile items -->
+  <text x="435" y="168" font-size="11.5" fill="#FF6B35">Input</text>
+  <text x="545" y="168" font-size="11.5" fill="#777">Rozpoznawanie mowy</text>
+
+  <text x="435" y="190" font-size="11.5" fill="#FF6B35">Output</text>
+  <text x="545" y="190" font-size="11.5" fill="#777">Odpowiedź głosowa AI</text>
+
+  <text x="435" y="212" font-size="11.5" fill="#FF6B35">Kontrola</text>
+  <text x="545" y="212" font-size="11.5" fill="#777">Odtwarzanie Spotify</text>
+
+  <text x="435" y="234" font-size="11.5" fill="#FF6B35">Alerty</text>
+  <text x="545" y="234" font-size="11.5" fill="#777">Powiadomienia push</text>
+
+  <text x="435" y="256" font-size="11.5" fill="#FF6B35">Styl</text>
+  <text x="545" y="256" font-size="11.5" fill="#777">Cyberpunk UI</text>
+
+  <!-- Separator 2 -->
+  <line x1="50" y1="298" x2="750" y2="298" stroke="url(#sep)" stroke-width="1"/>
+  <rect x="397" y="295" width="6" height="6" fill="#FF6B35" transform="rotate(45,400,298)" opacity="0.6"/>
+
+  <!-- System info -->
+  <text x="400" y="325" text-anchor="middle" font-size="11">
+    <tspan fill="#444">[SYS]</tspan><tspan fill="#666"> Architektura: Skille AI + wzorzec Action</tspan>
+  </text>
+  <text x="400" y="347" text-anchor="middle" font-size="11">
+    <tspan fill="#444">[SYS]</tspan><tspan fill="#666"> Auth: Token | DB: SQLite | Kolejka: Database</tspan>
+  </text>
+  <text x="400" y="369" text-anchor="middle" font-size="11">
+    <tspan fill="#444">[SYS]</tspan><tspan fill="#666"> Scheduler: co 2s dla zaplanowanych zadań</tspan>
+  </text>
+
+  <!-- Session terminated -->
+  <text x="400" y="402" text-anchor="middle" font-size="14" fill="#FF1744" font-weight="bold" filter="url(#glow)">> SESJA ZAKOŃCZONA _</text>
+</svg>
