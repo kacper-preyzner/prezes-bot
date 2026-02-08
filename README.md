@@ -1,96 +1,98 @@
 <div align="center">
+<table bgcolor="#080808"><tr><td align="center">
+
+<br>
 
 <img src="readme_images/logo.png" alt="PREZES BOT" width="700">
 
-<br>
+<br><br>
 
-```
-> INITIALIZING SYSTEM...
-> NEURAL LINK ESTABLISHED
-> ALL SYSTEMS OPERATIONAL
-```
+<samp>
+<font color="#FF1744">></font> <font color="#ccc">INICJALIZACJA SYSTEMU...</font><br>
+<font color="#FF6B35">></font> <font color="#ccc">ŁĄCZE NEURALNE AKTYWNE</font><br>
+<font color="#FF1744">></font> <font color="#ccc">WSZYSTKIE SYSTEMY SPRAWNE</font>
+</samp>
 
-<br>
+<br><br>
 
-[![Laravel](https://img.shields.io/badge/Laravel_12-080808?style=for-the-badge&logo=laravel&logoColor=FF1744)](https://laravel.com)
-[![Expo](https://img.shields.io/badge/Expo_54-080808?style=for-the-badge&logo=expo&logoColor=FF6B35)](https://expo.dev)
-[![PHP](https://img.shields.io/badge/PHP_8.2+-080808?style=for-the-badge&logo=php&logoColor=FF1744)](https://php.net)
-[![React Native](https://img.shields.io/badge/React_Native-080808?style=for-the-badge&logo=react&logoColor=FF6B35)](https://reactnative.dev)
+<a href="https://laravel.com"><img src="https://img.shields.io/badge/LARAVEL_12-FF1744?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel"></a>&nbsp;
+<a href="https://expo.dev"><img src="https://img.shields.io/badge/EXPO_54-FF6B35?style=for-the-badge&logo=expo&logoColor=white" alt="Expo"></a>&nbsp;
+<a href="https://php.net"><img src="https://img.shields.io/badge/PHP_8.2+-FF1744?style=for-the-badge&logo=php&logoColor=white" alt="PHP"></a>&nbsp;
+<a href="https://reactnative.dev"><img src="https://img.shields.io/badge/REACT_NATIVE-FF6B35?style=for-the-badge&logo=react&logoColor=white" alt="React Native"></a>
 
-</div>
+<br><br>
 
----
+</td></tr>
 
-<table>
+<tr><td>
+
+<table bgcolor="#080808" width="100%">
 <tr>
-<td width="50%">
-
-### `// BACKEND`
-
-```php
-<?php
+<td valign="top" width="50%" bgcolor="#111111">
+<br>
+<div align="center"><samp><font color="#FF1744">// BACKEND SKILLS</font></samp></div>
+<br>
+<pre>
 $skills = [
-    'AI Chat'       => 'Gemini 2.5 Flash',
-    'Voice'         => 'ElevenLabs TTS',
-    'Music'         => 'Spotify API',
-    'Search'        => 'Perplexity Sonar',
-    'Tasks'         => 'Scheduled AI Jobs',
-    'Quiz'          => 'BSS Exam Prep',
+    'Czat AI'  => 'Gemini 2.5 Flash',
+    'Głos'     => 'ElevenLabs TTS',
+    'Muzyka'   => 'Spotify API',
+    'Szukaj'   => 'Perplexity Sonar',
+    'Zadania'  => 'Scheduled AI Jobs',
+    'Quiz'     => 'Egzamin BSS',
 ];
-```
-
+</pre>
 </td>
-<td width="50%">
-
-### `// MOBILE`
-
-```typescript
+<td valign="top" width="50%" bgcolor="#111111">
+<br>
+<div align="center"><samp><font color="#FF6B35">// APLIKACJA MOBILNA</font></samp></div>
+<br>
+<pre>
 const app = {
-  input:    "Speech Recognition (PL)",
-  output:   "AI Voice Response",
-  controls: "Spotify Playback",
-  alerts:   "Push Notifications",
-  style:    "Cyberpunk UI",
+  input:    "Rozpoznawanie mowy",
+  output:   "Odpowiedź głosowa AI",
+  kontrola: "Odtwarzanie Spotify",
+  alerty:   "Powiadomienia push",
+  styl:     "Cyberpunk UI",
 };
-```
-
+</pre>
 </td>
 </tr>
 </table>
 
----
+</td></tr>
 
-<div align="center">
+<tr><td align="center" bgcolor="#080808">
+<br>
 
-### `BOOT SEQUENCE`
-
-</div>
-
-```bash
+<details>
+<summary><samp><font color="#FF1744">> SEKWENCJA URUCHOMIENIA [KLIKNIJ]</font></samp></summary>
+<br>
+<pre>
 # Backend
 composer setup
-composer dev              # http://localhost:8000
+composer dev              # localhost:8000
 
 # Mobile
 cd mobile && bun install
 bun start
-```
-
----
-
-<div align="center">
-
-```
-[SYSTEM] Architecture: Skills-based AI with Action pattern
-[SYSTEM] Auth: Token-based • DB: SQLite • Queue: Database
-[SYSTEM] Scheduler: 2s tick for planned task execution
-```
+</pre>
+</details>
 
 <br>
 
-```
-> SESSION TERMINATED
-> PREZES BOT v1.0
-```
+<samp>
+<font color="#555">[SYS]</font> <font color="#888">Architektura: Skille AI + wzorzec Action</font><br>
+<font color="#555">[SYS]</font> <font color="#888">Auth: Token | DB: SQLite | Kolejka: Database</font><br>
+<font color="#555">[SYS]</font> <font color="#888">Scheduler: co 2s dla zaplanowanych zadań</font>
+</samp>
 
+<br><br>
+
+<samp><font color="#FF1744">> SESJA ZAKOŃCZONA _</font></samp>
+
+<br><br>
+
+</td></tr>
+</table>
 </div>
