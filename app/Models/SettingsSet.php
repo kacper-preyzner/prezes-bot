@@ -16,7 +16,7 @@ class SettingsSet extends Model
 
     public const AVAILABLE_MODELS = [
         self::MODEL_GEMINI_FLASH => 'Gemini 2.5 Flash',
-        self::MODEL_CLAUDE_SONNET => 'Claude Sonnet 4',
+        self::MODEL_CLAUDE_SONNET => 'Claude Sonnet 4.6',
         self::MODEL_GPT_4_1_MINI => 'GPT-4.1 Mini',
     ];
 
