@@ -7,6 +7,7 @@ namespace App\Providers;
 use App\Data\ActionCollector;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,5 +29,7 @@ class AppServiceProvider extends ServiceProvider
         Model::shouldBeStrict();
         Model::unguard();
         Model::automaticallyEagerLoadRelationships();
+
+        Gate::define('viewLogViewer', fn (?\App\Models\User $user = null) => true);
     }
 }
